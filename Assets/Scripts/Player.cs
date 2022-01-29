@@ -11,7 +11,7 @@ public class Player : MonoBehaviour
     [Header("Shadow")]
     public GameObject Shadow;
     
-    [Header("Camera")]
+    [Header("Objects")]
     public GameObject Camera;
 
     private Rigidbody _coliderPlayer;
@@ -19,6 +19,7 @@ public class Player : MonoBehaviour
     private Transform _transformPlayer;
     
     private CameraMovement _cameraMovement;
+    private Shadow _shadow;
 
     private bool _isShadowSummoned = false;
 
@@ -28,12 +29,15 @@ public class Player : MonoBehaviour
         _animatorPlayer = GetComponent<Animator>();
         _transformPlayer = GetComponent<Transform>();
         _cameraMovement = Camera.GetComponent<CameraMovement>();
+        _shadow = Shadow.GetComponent<Shadow>();
     }
 
     private void SummonShadow()
     {
         Shadow.SetActive(true);
         _isShadowSummoned = true;
+        
+        _animatorPlayer.SetBool("isSummonedShadow", _isShadowSummoned);
         
         Shadow.transform.parent = null;
         
@@ -42,14 +46,18 @@ public class Player : MonoBehaviour
     
     private void UnSummonShadow()
     {
-        Shadow.SetActive(false);
         _isShadowSummoned = false;
+        
+        _animatorPlayer.SetBool("isSummonedShadow", _isShadowSummoned);
         
         _cameraMovement.ChangeUnderControllCharacter(_isShadowSummoned);
         
+        Shadow.SetActive(false);
         Shadow.transform.SetParent(gameObject.transform, true);
         Shadow.transform.localPosition = new Vector3(0, 0.3f, -0.5f);
         Shadow.transform.localRotation = Quaternion.Euler(0, 0, 0);
+
+        _shadow.UnSummon();
     }
 
     private void Update()
@@ -66,8 +74,7 @@ public class Player : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if ((Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) || 
-             Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D)) && !_isShadowSummoned)
+        if (!_isShadowSummoned)
         {
             float directionX = Input.GetAxis("Horizontal");
             float directionZ = Input.GetAxis("Vertical");

@@ -20,9 +20,9 @@ public class CameraMovement : MonoBehaviour
         transform.position = _characterTransform.position + _cameraTransform;
     }
 
-    public void ChangeUnderControllCharacter(bool _isShadowSummoned)
+    public void ChangeUnderControllCharacter(bool isShadowSummoned)
     {
-        if (_isShadowSummoned)
+        if (isShadowSummoned)
         {
             _characterTransform = _shadowTransform;
         }
